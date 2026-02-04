@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Phenomena Mindmap</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .mindmap-container {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 800px;
+            max-height: 800px;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-width: 250px;
+            line-height: 1.4;
+        }
+        
+        .tooltip.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <h1>Wave Phenomena</h1>
+    <p class="subtitle">Exploring Resonance, Standing Waves, and Signal Propagation across Physical Scales</p>
+
+    <div class="mindmap-container">
+        <canvas id="mindmapCanvas"></canvas>
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mindmapCanvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+        
+        const apps = [
+            { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Resonance of Antenna, Bohr orbits, and Cosmic Microwave Background Radiation." },
+            { name: "Standing Waves", url: "https://standing-waves.vercel.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
+            { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the birth of Quantum Mechanics." },
+            { name: "Radio Resonance", url: "https://resonance-radio.vercel.app/", color: "#10b981", desc: "Tuning circuits and EM wave capture via resonant frequency matching." },
+            { name: "Instruments", url: "https://standing-waves-instruments.vercel.app/", color: "#06b6d4", desc: "Standing waves in strings and air columns (Musical physics)." },
+            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.vercel.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal lagoon energy extraction." },
+            { name: "Power Analysis", url: "https://power-analysis-w9dd.vercel.app/", color: "#6366f1", desc: "Wave resonance and power distribution in mechanical systems." },
+            { name: "Seismography", url: "https://seismography.vercel.app/", color: "#8b5cf6", desc: "Detecting P and S waves to locate earthquake epicenters." },
+            { name: "Tomography", url: "https://seismic-tomography.vercel.app/", color: "#a855f7", desc: "Imaging the Earth's interior using seismic wave velocity variations." },
+            { name: "Sound Intensity", url: "https://adding-sound-intensities.vercel.app/", color: "#d946ef", desc: "Logarithmic addition of decibels and interference patterns." },
+            { name: "Global Warming", url: "https://global-bucket-warming.vercel.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption in the atmosphere." },
+            { name: "Resonance Tube", url: "https://resonance-tube.vercel.app/", color: "#f43f5e", desc: "Measuring the speed of sound through resonant air columns." }
+        ];
+
+        let hoveredSlice = -1;
+        let hoveredCenter = false;
+
+        function initCanvas() {
+            const container = document.querySelector('.mindmap-container');
+            const size = Math.min(container.offsetWidth, container.offsetHeight);
+            canvas.width = size * window.devicePixelRatio;
+            canvas.height = size * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+
+        function drawMindmap() {
+            const size = canvas.width / window.devicePixelRatio;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const outerRadius = size * 0.42;
+            const innerRadius = size * 0.15;
+            
+            ctx.clearRect(0, 0, size, size);
+            
+            const sliceAngle = (Math.PI * 2) / apps.length;
+            
+            apps.forEach((app, i) => {
+                const startAngle = i * sliceAngle - Math.PI / 2;
+                const endAngle = startAngle + sliceAngle;
+                const isHovered = hoveredSlice === i;
+                
+                // Draw Slice
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                const currentRadius = isHovered ? outerRadius + 15 : outerRadius;
+                ctx.arc(centerX, centerY, currentRadius, startAngle, endAngle);
+                ctx.closePath();
+                
+                ctx.fillStyle = app.color;
+                ctx.globalAlpha = isHovered ? 0.9 : 0.7;
+                ctx.fill();
+                
+                // Border
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Text
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "white";
+                ctx.font = isHovered ? "bold 14px Segoe UI" : "12px Segoe UI";
+                ctx.fillText(app.name, outerRadius - 20, 5);
+                ctx.restore();
+            });
+
+            // Center Circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
+            ctx.fillStyle = hoveredCenter ? '#ffffff' : '#1e293b';
+            ctx.globalAlpha = 1;
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Center Text
+            ctx.fillStyle = hoveredCenter ? '#1e293b' : 'white';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillText('THEMATIC', centerX, centerY - 2);
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('PHYSICS', centerX, centerY + 15);
+        }
+
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / window.devicePixelRatio / rect.width;
+            const scaleY = canvas.height / window.devicePixelRatio / rect.height;
+            return {
+                x: (evt.clientX - rect.left) * scaleX,
+                y: (evt.clientY - rect.top) * scaleY
+            };
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const pos = getMousePos(e);
+            const size = canvas.width / window.devicePixelRatio;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            
+            const dx = pos.x - centerX;
+            const dy = pos.y - centerY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const innerRadius = size * 0.15;
+            const outerRadius = size * 0.42;
+
+            if (dist < innerRadius) {
+                hoveredCenter = true;
+                hoveredSlice = -1;
+                tooltip.classList.remove('show');
+                canvas.style.cursor = 'pointer';
+            } else if (dist < outerRadius + 20) {
+                hoveredCenter = false;
+                let angle = Math.atan2(dy, dx) + Math.PI / 2;
+                if (angle < 0) angle += Math.PI * 2;
+                hoveredSlice = Math.floor(angle / ((Math.PI * 2) / apps.length));
+                
+                const app = apps[hoveredSlice];
+                tooltip.innerHTML = `<strong>${app.name}</strong><br>${app.desc}`;
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltip.classList.add('show');
+                canvas.style.cursor = 'pointer';
+            } else {
+                hoveredSlice = -1;
+                hoveredCenter = false;
+                tooltip.classList.remove('show');
+                canvas.style.cursor = 'default';
+            }
+            drawMindmap();
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (hoveredSlice !== -1) {
+                window.open(apps[hoveredSlice].url, '_blank');
+            } else if (hoveredCenter) {
+                window.open('https://leelemacjames.github.io/thematicPhysics/', '_blank');
+            }
+        });
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        drawMindmap();
+    </script>
+</body>
+</html>
