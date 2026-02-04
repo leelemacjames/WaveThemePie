@@ -97,18 +97,18 @@
         const tooltip = document.getElementById('tooltip');
         
         const apps = [
-            { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Atomic resonance: Antenna models of Bohr orbits and Cosmic Microwave Background Radiation." },
-            { name: "Standing Waves", url: "https://standing-waves.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
-            { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the quantization of energy." },
-            { name: "Radio Resonance", url: "https://resonance-radio.app/", color: "#10b981", desc: "Circuit tuning: capturing EM waves via resonant frequency matching." },
-            { name: "Instruments", url: "https://standing-waves-instruments.app/", color: "#06b6d4", desc: "Harmonics in strings and air columns: the physics of music." },
-            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal energy extraction." },
-            { name: "Power Analysis", url: "https://power-analysis-w9dd.app/", color: "#6366f1", desc: "Energy transfer and power distribution in resonant mechanical systems." },
-            { name: "Seismography", url: "https://seismography.app/", color: "#8b5cf6", desc: "Seismic wave detection (P & S waves) for earthquake location." },
-            { name: "Tomography", url: "https://seismic-tomography.app/", color: "#a855f7", desc: "Imaging Earth's interior using wave velocity variations." },
-            { name: "Sound Intensity", url: "https://adding-sound-intensities.app/", color: "#d946ef", desc: "Logarithmic wave addition: Decibels and interference." },
-            { name: "Global Warming", url: "https://global-bucket-warming.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption spectra." },
-            { name: "Resonance Tube", url: "https://resonance-tube.app/", color: "#f43f5e", desc: "Determining sound speed via resonant air column frequency." }
+            { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Resonance of Antenna, Bohr orbits, and Cosmic Microwave Background Radiation." },
+            { name: "Standing Waves", url: "https://standing-waves.vercel.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
+            { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the birth of Quantum Mechanics." },
+            { name: "Radio Resonance", url: "https://resonance-radio.vercel.app/", color: "#10b981", desc: "Tuning circuits and EM wave capture via resonant frequency matching." },
+            { name: "Instruments", url: "https://standing-waves-instruments.vercel.app/", color: "#06b6d4", desc: "Standing waves in strings and air columns (Musical physics)." },
+            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.vercel.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal lagoon energy extraction." },
+            { name: "Power Analysis", url: "https://power-analysis-w9dd.vercel.app/", color: "#6366f1", desc: "Wave resonance and power distribution in mechanical systems." },
+            { name: "Seismography", url: "https://seismography.vercel.app/", color: "#8b5cf6", desc: "Detecting P and S waves to locate earthquake epicenters." },
+            { name: "Tomography", url: "https://seismic-tomography.vercel.app/", color: "#a855f7", desc: "Imaging the Earth's interior using seismic wave velocity variations." },
+            { name: "Sound Intensity", url: "https://adding-sound-intensities.vercel.app/", color: "#d946ef", desc: "Logarithmic addition of decibels and interference patterns." },
+            { name: "Global Warming", url: "https://global-bucket-warming.vercel.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption in the atmosphere." },
+            { name: "Resonance Tube", url: "https://resonance-tube.vercel.app/", color: "#f43f5e", desc: "Measuring the speed of sound through resonant air columns." }
         ];
 
         let hoveredSlice = -1;
@@ -139,7 +139,6 @@
                 const endAngle = startAngle + sliceAngle;
                 const isHovered = hoveredSlice === i;
                 
-                // Draw Slices
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 const currentRadius = isHovered ? outerRadius + 12 : outerRadius;
@@ -154,21 +153,18 @@
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
 
-                // Draw Text with Orientation Logic
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(angleMid);
                 
-                // Determine hemisphere (Right side vs Left side of the circle)
-                // Normalize angle for check
-                const normAngle = angleMid % (Math.PI * 2);
-                const isLeftSide = (normAngle > Math.PI / 2 || normAngle < -Math.PI / 2);
+                // Flip text on the left hemisphere (6 to 12 o'clock)
+                const normAngle = ((angleMid + Math.PI / 2) % (Math.PI * 2) + (Math.PI * 2)) % (Math.PI * 2);
+                const isLeftSide = (normAngle > Math.PI && normAngle < Math.PI * 2);
 
                 ctx.fillStyle = "white";
                 ctx.font = isHovered ? "bold 13px Segoe UI" : "11px Segoe UI";
 
                 if (isLeftSide) {
-                    // Flip text so it is upright for the left hemisphere
                     ctx.rotate(Math.PI);
                     ctx.textAlign = "left";
                     ctx.fillText(app.name, -outerRadius + 15, 5);
@@ -180,7 +176,6 @@
                 ctx.restore();
             });
 
-            // Center Button
             ctx.beginPath();
             ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
             ctx.fillStyle = hoveredCenter ? '#ffffff' : '#1e293b';
