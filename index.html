@@ -10,20 +10,24 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Lifts the content to the center */
             padding: 20px;
             overflow: hidden;
         }
         
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
         h1 {
             color: white;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-align: center;
+            font-size: clamp(1.8em, 4vw, 2.5em);
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             font-weight: 300;
             letter-spacing: 2px;
@@ -31,29 +35,34 @@
         
         .subtitle {
             color: #94a3b8;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            text-align: center;
-            max-width: 600px;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            white-space: nowrap; /* Prevents stretching over two lines */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 95vw;
         }
         
         .mindmap-container {
             position: relative;
-            width: 90vmin;
-            height: 90vmin;
-            max-width: 800px;
-            max-height: 800px;
+            width: 85vmin;
+            height: 85vmin;
+            max-width: 750px;
+            max-height: 750px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         canvas {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 0 30px rgba(0,0,0,0.6));
+            cursor: default;
         }
         
         .tooltip {
             position: fixed;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.98);
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
@@ -62,9 +71,9 @@
             opacity: 0;
             transition: opacity 0.2s;
             z-index: 100;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            max-width: 250px;
+            max-width: 280px;
             line-height: 1.4;
         }
         
@@ -73,8 +82,10 @@
 </head>
 <body>
 
-    <h1>Wave Phenomena</h1>
-    <p class="subtitle">Exploring Resonance, Standing Waves, and Signal Propagation across Physical Scales</p>
+    <header>
+        <h1>Wave Phenomena</h1>
+        <p class="subtitle">Resonance, Standing Waves, and Signal Propagation across Physical Scales</p>
+    </header>
 
     <div class="mindmap-container">
         <canvas id="mindmapCanvas"></canvas>
@@ -87,18 +98,18 @@
         const tooltip = document.getElementById('tooltip');
         
         const apps = [
-            { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Resonance of Antenna, Bohr orbits, and Cosmic Microwave Background Radiation." },
+            { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Atomic resonance: Antenna models of Bohr orbits and Cosmic Microwave Background Radiation." },
             { name: "Standing Waves", url: "https://standing-waves.vercel.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
-            { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the birth of Quantum Mechanics." },
-            { name: "Radio Resonance", url: "https://resonance-radio.vercel.app/", color: "#10b981", desc: "Tuning circuits and EM wave capture via resonant frequency matching." },
-            { name: "Instruments", url: "https://standing-waves-instruments.vercel.app/", color: "#06b6d4", desc: "Standing waves in strings and air columns (Musical physics)." },
-            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.vercel.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal lagoon energy extraction." },
-            { name: "Power Analysis", url: "https://power-analysis-w9dd.vercel.app/", color: "#6366f1", desc: "Wave resonance and power distribution in mechanical systems." },
-            { name: "Seismography", url: "https://seismography.vercel.app/", color: "#8b5cf6", desc: "Detecting P and S waves to locate earthquake epicenters." },
-            { name: "Tomography", url: "https://seismic-tomography.vercel.app/", color: "#a855f7", desc: "Imaging the Earth's interior using seismic wave velocity variations." },
-            { name: "Sound Intensity", url: "https://adding-sound-intensities.vercel.app/", color: "#d946ef", desc: "Logarithmic addition of decibels and interference patterns." },
-            { name: "Global Warming", url: "https://global-bucket-warming.vercel.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption in the atmosphere." },
-            { name: "Resonance Tube", url: "https://resonance-tube.vercel.app/", color: "#f43f5e", desc: "Measuring the speed of sound through resonant air columns." }
+            { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the quantization of energy." },
+            { name: "Radio Resonance", url: "https://resonance-radio.vercel.app/", color: "#10b981", desc: "Circuit tuning: capturing EM waves via resonant frequency matching." },
+            { name: "Instruments", url: "https://standing-waves-instruments.vercel.app/", color: "#06b6d4", desc: "Harmonics in strings and air columns: the physics of music." },
+            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.vercel.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal energy extraction." },
+            { name: "Power Analysis", url: "https://power-analysis-w9dd.vercel.app/", color: "#6366f1", desc: "Energy transfer and power distribution in resonant mechanical systems." },
+            { name: "Seismography", url: "https://seismography.vercel.app/", color: "#8b5cf6", desc: "Seismic wave detection (P & S waves) for earthquake location." },
+            { name: "Tomography", url: "https://seismic-tomography.vercel.app/", color: "#a855f7", desc: "Imaging Earth's interior using wave velocity variations." },
+            { name: "Sound Intensity", url: "https://adding-sound-intensities.vercel.app/", color: "#d946ef", desc: "Logarithmic wave addition: Decibels and interference." },
+            { name: "Global Warming", url: "https://global-bucket-warming.vercel.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption spectra." },
+            { name: "Resonance Tube", url: "https://resonance-tube.vercel.app/", color: "#f43f5e", desc: "Determining sound speed via resonant air column frequency." }
         ];
 
         let hoveredSlice = -1;
@@ -107,20 +118,20 @@
         function initCanvas() {
             const container = document.querySelector('.mindmap-container');
             const size = Math.min(container.offsetWidth, container.offsetHeight);
-            canvas.width = size * window.devicePixelRatio;
-            canvas.height = size * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            ctx.scale(dpr, dpr);
         }
 
         function drawMindmap() {
-            const size = canvas.width / window.devicePixelRatio;
+            const size = canvas.width / (window.devicePixelRatio || 1);
             const centerX = size / 2;
             const centerY = size / 2;
-            const outerRadius = size * 0.42;
+            const outerRadius = size * 0.40;
             const innerRadius = size * 0.15;
             
             ctx.clearRect(0, 0, size, size);
-            
             const sliceAngle = (Math.PI * 2) / apps.length;
             
             apps.forEach((app, i) => {
@@ -128,65 +139,58 @@
                 const endAngle = startAngle + sliceAngle;
                 const isHovered = hoveredSlice === i;
                 
-                // Draw Slice
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
-                const currentRadius = isHovered ? outerRadius + 15 : outerRadius;
+                const currentRadius = isHovered ? outerRadius + 12 : outerRadius;
                 ctx.arc(centerX, centerY, currentRadius, startAngle, endAngle);
                 ctx.closePath();
                 
                 ctx.fillStyle = app.color;
-                ctx.globalAlpha = isHovered ? 0.9 : 0.7;
+                ctx.globalAlpha = isHovered ? 1.0 : 0.75;
                 ctx.fill();
                 
-                // Border
-                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
 
-                // Text
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(startAngle + sliceAngle / 2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = "white";
-                ctx.font = isHovered ? "bold 14px Segoe UI" : "12px Segoe UI";
-                ctx.fillText(app.name, outerRadius - 20, 5);
+                ctx.font = isHovered ? "bold 13px Segoe UI" : "11px Segoe UI";
+                ctx.fillText(app.name, outerRadius - 15, 5);
                 ctx.restore();
             });
 
-            // Center Circle
             ctx.beginPath();
             ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
             ctx.fillStyle = hoveredCenter ? '#ffffff' : '#1e293b';
             ctx.globalAlpha = 1;
             ctx.fill();
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+            ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Center Text
             ctx.fillStyle = hoveredCenter ? '#1e293b' : 'white';
             ctx.textAlign = 'center';
-            ctx.font = 'bold 16px Segoe UI';
-            ctx.fillText('THEMATIC', centerX, centerY - 2);
-            ctx.font = '12px Segoe UI';
-            ctx.fillText('PHYSICS', centerX, centerY + 15);
+            ctx.font = 'bold 15px Segoe UI';
+            ctx.fillText('WAVE', centerX, centerY - 2);
+            ctx.font = '10px Segoe UI';
+            ctx.fillText('THEMES', centerX, centerY + 14);
         }
 
         function getMousePos(evt) {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / window.devicePixelRatio / rect.width;
-            const scaleY = canvas.height / window.devicePixelRatio / rect.height;
             return {
-                x: (evt.clientX - rect.left) * scaleX,
-                y: (evt.clientY - rect.top) * scaleY
+                x: (evt.clientX - rect.left) * (canvas.width / (window.devicePixelRatio || 1) / rect.width),
+                y: (evt.clientY - rect.top) * (canvas.height / (window.devicePixelRatio || 1) / rect.height)
             };
         }
 
         canvas.addEventListener('mousemove', (e) => {
             const pos = getMousePos(e);
-            const size = canvas.width / window.devicePixelRatio;
+            const size = canvas.width / (window.devicePixelRatio || 1);
             const centerX = size / 2;
             const centerY = size / 2;
             
@@ -194,14 +198,14 @@
             const dy = pos.y - centerY;
             const dist = Math.sqrt(dx*dx + dy*dy);
             const innerRadius = size * 0.15;
-            const outerRadius = size * 0.42;
+            const outerRadius = size * 0.40;
 
             if (dist < innerRadius) {
                 hoveredCenter = true;
                 hoveredSlice = -1;
                 tooltip.classList.remove('show');
                 canvas.style.cursor = 'pointer';
-            } else if (dist < outerRadius + 20) {
+            } else if (dist < outerRadius + 15) {
                 hoveredCenter = false;
                 let angle = Math.atan2(dy, dx) + Math.PI / 2;
                 if (angle < 0) angle += Math.PI * 2;
@@ -230,7 +234,11 @@
             }
         });
 
-        window.addEventListener('resize', initCanvas);
+        window.addEventListener('resize', () => {
+            initCanvas();
+            drawMindmap();
+        });
+        
         initCanvas();
         drawMindmap();
     </script>
