@@ -14,7 +14,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Lifts the content to the center */
+            justify-content: center;
             padding: 20px;
             overflow: hidden;
         }
@@ -36,7 +36,7 @@
         .subtitle {
             color: #94a3b8;
             font-size: clamp(0.9em, 2vw, 1.1em);
-            white-space: nowrap; /* Prevents stretching over two lines */
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 95vw;
@@ -57,7 +57,6 @@
             width: 100%;
             height: 100%;
             filter: drop-shadow(0 0 30px rgba(0,0,0,0.6));
-            cursor: default;
         }
         
         .tooltip {
@@ -99,17 +98,17 @@
         
         const apps = [
             { name: "Bohr & CMBR", url: "https://resonance-bohr-antenna.vercel.app/", color: "#ef4444", desc: "Atomic resonance: Antenna models of Bohr orbits and Cosmic Microwave Background Radiation." },
-            { name: "Standing Waves", url: "https://standing-waves.vercel.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
+            { name: "Standing Waves", url: "https://standing-waves.app/", color: "#f97316", desc: "Visualizing nodes, antinodes, and superposition in linear media." },
             { name: "UV Catastrophe", url: "https://ultra-violet-catastrophe-br.vercel.app/", color: "#f59e0b", desc: "The failure of classical wave theory and the quantization of energy." },
-            { name: "Radio Resonance", url: "https://resonance-radio.vercel.app/", color: "#10b981", desc: "Circuit tuning: capturing EM waves via resonant frequency matching." },
-            { name: "Instruments", url: "https://standing-waves-instruments.vercel.app/", color: "#06b6d4", desc: "Harmonics in strings and air columns: the physics of music." },
-            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.vercel.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal energy extraction." },
-            { name: "Power Analysis", url: "https://power-analysis-w9dd.vercel.app/", color: "#6366f1", desc: "Energy transfer and power distribution in resonant mechanical systems." },
-            { name: "Seismography", url: "https://seismography.vercel.app/", color: "#8b5cf6", desc: "Seismic wave detection (P & S waves) for earthquake location." },
-            { name: "Tomography", url: "https://seismic-tomography.vercel.app/", color: "#a855f7", desc: "Imaging Earth's interior using wave velocity variations." },
-            { name: "Sound Intensity", url: "https://adding-sound-intensities.vercel.app/", color: "#d946ef", desc: "Logarithmic wave addition: Decibels and interference." },
-            { name: "Global Warming", url: "https://global-bucket-warming.vercel.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption spectra." },
-            { name: "Resonance Tube", url: "https://resonance-tube.vercel.app/", color: "#f43f5e", desc: "Determining sound speed via resonant air column frequency." }
+            { name: "Radio Resonance", url: "https://resonance-radio.app/", color: "#10b981", desc: "Circuit tuning: capturing EM waves via resonant frequency matching." },
+            { name: "Instruments", url: "https://standing-waves-instruments.app/", color: "#06b6d4", desc: "Harmonics in strings and air columns: the physics of music." },
+            { name: "Tidal Waves", url: "https://tidal-lagoon-physics.app/", color: "#3b82f6", desc: "Long-period wave mechanics and tidal energy extraction." },
+            { name: "Power Analysis", url: "https://power-analysis-w9dd.app/", color: "#6366f1", desc: "Energy transfer and power distribution in resonant mechanical systems." },
+            { name: "Seismography", url: "https://seismography.app/", color: "#8b5cf6", desc: "Seismic wave detection (P & S waves) for earthquake location." },
+            { name: "Tomography", url: "https://seismic-tomography.app/", color: "#a855f7", desc: "Imaging Earth's interior using wave velocity variations." },
+            { name: "Sound Intensity", url: "https://adding-sound-intensities.app/", color: "#d946ef", desc: "Logarithmic wave addition: Decibels and interference." },
+            { name: "Global Warming", url: "https://global-bucket-warming.app/", color: "#ec4899", desc: "Radiative forcing and EM wave absorption spectra." },
+            { name: "Resonance Tube", url: "https://resonance-tube.app/", color: "#f43f5e", desc: "Determining sound speed via resonant air column frequency." }
         ];
 
         let hoveredSlice = -1;
@@ -135,10 +134,12 @@
             const sliceAngle = (Math.PI * 2) / apps.length;
             
             apps.forEach((app, i) => {
+                const angleMid = i * sliceAngle - Math.PI / 2 + sliceAngle / 2;
                 const startAngle = i * sliceAngle - Math.PI / 2;
                 const endAngle = startAngle + sliceAngle;
                 const isHovered = hoveredSlice === i;
                 
+                // Draw Slices
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 const currentRadius = isHovered ? outerRadius + 12 : outerRadius;
@@ -153,16 +154,33 @@
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
 
+                // Draw Text with Orientation Logic
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                ctx.rotate(startAngle + sliceAngle / 2);
-                ctx.textAlign = "right";
+                ctx.rotate(angleMid);
+                
+                // Determine hemisphere (Right side vs Left side of the circle)
+                // Normalize angle for check
+                const normAngle = angleMid % (Math.PI * 2);
+                const isLeftSide = (normAngle > Math.PI / 2 || normAngle < -Math.PI / 2);
+
                 ctx.fillStyle = "white";
                 ctx.font = isHovered ? "bold 13px Segoe UI" : "11px Segoe UI";
-                ctx.fillText(app.name, outerRadius - 15, 5);
+
+                if (isLeftSide) {
+                    // Flip text so it is upright for the left hemisphere
+                    ctx.rotate(Math.PI);
+                    ctx.textAlign = "left";
+                    ctx.fillText(app.name, -outerRadius + 15, 5);
+                } else {
+                    ctx.textAlign = "right";
+                    ctx.fillText(app.name, outerRadius - 15, 5);
+                }
+                
                 ctx.restore();
             });
 
+            // Center Button
             ctx.beginPath();
             ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
             ctx.fillStyle = hoveredCenter ? '#ffffff' : '#1e293b';
